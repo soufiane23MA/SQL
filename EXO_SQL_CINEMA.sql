@@ -58,5 +58,59 @@ f. Casting d’un film en particulier (id_film) : nom, prénom des acteurs + sex
 SELECT p.nom_Personne,p.prenom_Personne, p.sex_Personne FROM personne p 
 INNER JOIN acteur a ON a.id_Personne = p.id_Personne
 INNER JOIN jouer j ON j.id_Acteur=a.id_Acteur
-INNER JOIN film f ON f.id_Filme= j.id_Filme
-WHERE f.id_Filme =2;
+ 
+WHERE j.id_Filme =2;
+
+g. Films tournés par un acteur en particulier (id_acteur) avec leur rôle et l’année de
+sortie (du film le plus récent au plus ancien)
+
+ SELECT f.titre,f.annee_Sortie,ro.nom_Role FROM film f
+INNER JOIN jouer j ON j.id_Filme=f.id_Filme
+INNER JOIN  role ro ON j.id_Role=ro.id_Role
+INNER JOIN acteur a ON j.id_Acteur= a.id_Acteur
+WHERE a.id_Acteur=1
+ORDER BY f.annee_Sortie DESC;
+
+h. Liste des personnes qui sont à la fois acteurs et réalisateurs.
+ 
+ SELECT p.nom_Personne,p.prenom_Personne  FROM personne p
+ INNER  JOIN acteur a ON a.id_Personne= p.id_Personne
+ INNER JOIN jouer j ON j.id_Acteur=a.id_Acteur
+ INNER JOIN film f ON f.id_Filme=j.id_Filme
+ INNER JOIN realisateur r ON p.id_Personne=r.id_Personne
+ GROUP BY p.id_Personne;
+
+i. Liste des films qui ont moins de 5 ans (classés du plus récent au plus ancien)
+/* la fonction year curdate(), retourne l'annee courante */
+
+SELECT f.titre,f.annee_Sortie 
+FROM film f
+WHERE YEAR(CURDATE()) - f.annee_Sortie < 5
+ORDER BY f.annee_Sortie DESC;
+
+j. Nombre d’hommes et de femmes parmi les acteurs
+
+SELECT p.sex_Personne, COUNT(*) AS nombre
+FROM personne p
+INNER JOIN acteur a ON a.id_Personne = p.id_Personne
+GROUP BY p.sex_Personne;
+
+k. Liste des acteurs ayant plus de 50 ans (âge révolu et non révolu)
+/* j'utilise la fonction DATEDIFF aui retourne la difference entre
+2 date , et NOW() retounre la date d'aujourd'hui*/
+
+SELECT p.date_naissance,p.nom_Personne AS ACTEUR  from personne p
+INNER JOIN acteur a ON a.id_Personne=p.id_Personne
+WHERE DATEDIFF (NOW(),p.date_Naissance)>=50; 
+
+. Acteurs ayant joué dans 3 films ou plus.
+/* je electione le nom prenom de l'acteur , avec la jointure PERSONNE
+et ACTEUR, avec count je compte le totatal de filme associer
+à l'acteur , et je filtre vec having , les acteur qui ont un total
+filme >3*/
+
+SELECT  p.nom_Personne,p.prenom_Personne,COUNT(j.id_Filme) AS nombreFilme  FROM personne p
+INNER JOIN acteur a ON a.id_Personne=p.id_Personne
+INNER JOIN jouer j ON j.id_Acteur=a.id_Acteur
+GROUP BY p.id_Personne
+HAVING COUNT(j.id_Filme)>=3;
