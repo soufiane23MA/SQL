@@ -13,7 +13,7 @@ WHERE f.id_Filme=6;
 b: Liste des films dont la durée excède 2h15 classés par durée (du + long au + court)
  
 SELECT f.titre AS 'TITRE', f.duree_Filme AS 'DUREE DE Filme' FROM film f 
-WHERE  duree_Filme > '02:15:00'
+WHERE  duree_Filme > 135
 ORDER BY  duree_Filme DESC;
 
 c: Liste des films d’un réalisateur (en précisant l’année de sortie) 
@@ -53,3 +53,10 @@ GROUP BY p.id_Personne
 ORDER BY nombre_films DESC;
 
 f. Casting d’un film en particulier (id_film) : nom, prénom des acteurs + sexe
+
+
+SELECT p.nom_Personne,p.prenom_Personne, p.sex_Personne FROM personne p 
+INNER JOIN acteur a ON a.id_Personne = p.id_Personne
+INNER JOIN jouer j ON j.id_Acteur=a.id_Acteur
+INNER JOIN film f ON f.id_Filme= j.id_Filme
+WHERE f.id_Filme =2;
